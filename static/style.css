@@ -1,0 +1,193 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Main chat container */
+h1 {
+    color: #4a90e2;
+}
+
+#onlineCount {
+    font-size: 1.1em;
+    color: #333;
+    margin-top: 10px;
+}
+
+/* User list styling */
+#userList {
+    font-weight: bold;
+    color: #4a90e2;
+}
+
+#messages {
+    width: 60%;
+    max-width: 700px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 10px;
+    margin: 20px 0;
+    overflow-y: auto;
+    height: 400px;
+}
+
+.message {
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Message alignment */
+.message.left {
+    text-align: left;
+    background-color: #f1f1f1;
+    border-left: 4px solid #4a90e2;
+}
+
+.message.right {
+    text-align: right;
+    background-color: #daf1da;
+    border-right: 4px solid #2ecc71;
+}
+
+/* Reactions styling */
+.reactions {
+    font-size: 1.2em;
+    margin-top: 5px;
+}
+
+/* Input form styling */
+#messageForm {
+    display: flex;
+    width: 60%;
+    max-width: 700px;
+    margin-bottom: 20px;
+}
+
+#message {
+    flex: 1;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+}
+
+#message:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    background-color: #4a90e2;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #357abd;
+}
+
+button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+/* Leave button */
+#leaveButton {
+    background-color: #e74c3c;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+#leaveButton:hover {
+    background-color: #c0392b;
+}
+
+/* Login Page Styling */
+#login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background-color: #f4f4f9;
+}
+
+#login-form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#login-form h2 {
+    color: #4a90e2;
+    margin-bottom: 20px;
+}
+
+#login-form label {
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 8px;
+    align-self: flex-start;
+}
+
+#login-form input[type="email"],
+#login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+#login-form input:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+#login-form button {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    background-color: #4a90e2;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#login-form button:hover {
+    background-color: #357abd;
+}
+
+#login-form .error {
+    color: #e74c3c;
+    font-size: 0.9em;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+

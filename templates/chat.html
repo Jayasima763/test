@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const socket = io.connect();
+            let username = "{{ username }}";
+
+            // Automatically set the username upon connection
+            socket.emit('set_username');
+
+            socket.on('welcome', user => {
+                document.getElementById('messages').innerHTML += `<p>Welcome ${user}!</p>`;
+                updateOnlineCount(); // Update online users count on welcome
+            });
+
+            socket.on('broadcast_message', data => {
+                const alignment = data.sender === username ? 'right' : 'left';
+                document.getElementById('messages').innerHTML += `
+                    <div id="message-${data.id}" class="message ${alignment}">
+                        <p><strong>${data.sender}:</strong> ${data.message}</p>
+                        <button onclick="showReactOptions('${data.id}')">React</button>
+                        <button onclick="replyToMessage('${data.id}')">Reply</button>
+                        <div id="reactions-${data.id}" class="reactions"></div>
+                    </div>`;
+            });
+
+            socket.on('personal_message', data => {
+                const alignment = data.sender === username ? 'right' : 'left';
+                document.getElementById('messages').innerHTML += `
+                    <div id="message-${data.id}" class="message ${alignment}">
+                        <p style="font-style: italic;">Personal from ${data.sender}: ${data.message}</p>
+                        <button onclick="showReactOptions('${data.id}')">React</button>
+                        <button onclick="replyToMessage('${data.id}')">Reply</button>
+                        <div id="reactions-${data.id}" class="reactions"></div>
+                    </div>`;
+            });
+
+            socket.on('user_disconnected', user => {
+                document.getElementById('messages').innerHTML += `<p>${user} has left the chat.</p>`;
+                updateOnlineCount(); // Update user count when someone disconnects
+            });
+
+            socket.on('user_list', users => {
+                // Update the online users list in the UI
+                document.getElementById('userList').innerHTML = users.join(', ');
+                updateOnlineCount(users.length); // Update the online count
+            });
+
+            socket.on('receive_usernames', usernames => {
+                window.usernames = usernames;
+            });
+
+            socket.on('add_reaction', data => {
+                const reactionsDiv = document.getElementById(`reactions-${data.messageId}`);
+                if (reactionsDiv) {
+                    reactionsDiv.innerHTML += `<span>${data.emoji}</span> `;
+                }
+            });
+
+            document.getElementById('message').addEventListener('input', (e) => {
+                const value = e.target.value;
+                if (value.endsWith('@')) {
+                    socket.emit('request_usernames');
+                    showSuggestions(value.slice(value.indexOf('@') + 1));
+                }
+            });
+
+            function showSuggestions(input) {
+                const suggestionsDiv = document.getElementById('suggestions');
+                suggestionsDiv.innerHTML = '';
+                const filteredUsernames = window.usernames.filter(name => name.startsWith(input));
+                filteredUsernames.forEach(name => {
+                    const suggestion = document.createElement('div');
+                    suggestion.textContent = name;
+                    suggestion.onclick = () => selectSuggestion(name);
+                    suggestionsDiv.appendChild(suggestion);
+                });
+            }
+
+            function selectSuggestion(name) {
+                const messageInput = document.getElementById('message');
+                messageInput.value += name + ' ';
+                document.getElementById('suggestions').innerHTML = '';
+            }
+
+            document.getElementById('messageForm').onsubmit = e => {
+                e.preventDefault();
+                const message = document.getElementById('message').value;
+                socket.emit('send_message', { message });
+                document.getElementById('message').value = '';
+            };
+
+            window.replyToMessage = (messageId) => {
+                const replyMessage = prompt("Enter your reply:");
+                if (replyMessage) {
+                    socket.emit('send_message', { message: replyMessage, replyTo: messageId });
+                }
+            };
+
+            window.showReactOptions = (messageId) => {
+                const emoji = prompt("Enter reaction emoji (e.g., 👍, ❤️, 😂):");
+                if (emoji) {
+                    socket.emit('react_to_message', { messageId, emoji });
+                }
+            };
+
+            document.getElementById('leaveButton').onclick = () => {
+                socket.emit('disconnect_user');
+                window.location.href = '/';
+            };
+
+            function updateOnlineCount(count) {
+                document.getElementById('onlineCount').innerText = `Online Users: ${count}`;
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <p id="onlineCount">Online Users: 0</p>
+    <p><strong>Online Users:</strong> <span id="userList"></span></p>
+    <div id="messages"></div>
+    <form id="messageForm">
+        <input type="text" id="message" placeholder="Type message here" required>
+        <button type="submit">Send</button>
+    </form>
+    <div id="suggestions" class="suggestions-box"></div>
+    <button id="leaveButton">Leave Room</button>
+</body>
+</html>
